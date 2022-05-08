@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+//const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const productSchema = mongoose.Schema({
     name: {
@@ -19,15 +20,21 @@ const productSchema = mongoose.Schema({
         max: 30,
         trim: true, 
     },
-    price: {
+    initialPrice: {
         type: Number,
         required: true,
         trim: true,
     },
-    dateCreated: {
-        type: Date,
-        default: Date.now,
+    currentValue: {
+        type: Number,
+        required: true,
+        trim: true,
     },
-});
+    noInStock: {
+        type: Number,
+        default: 0,
+        trim: true,
+    }
+}, {timestamps: true});
 
-module.exports =  mongoose.model('Products', productSchema);
+export const Product =  mongoose.model('Products', productSchema);

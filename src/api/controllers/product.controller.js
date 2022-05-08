@@ -1,5 +1,7 @@
-const Product = require('../models/product.model');
-const {productValidator} = require('../validators/product.validator');
+//const Product = require('../models/product.model');
+import {Product} from "../models/product.model.js";
+//const {productValidator} = require('../validators/product.validator');
+import {productValidator} from "../validators/product.validator.js";
 
 //create
 const createProduct = async(req, res) => {
@@ -30,14 +32,60 @@ const createProduct = async(req, res) => {
 
 //get all product
 const getallProduct = async(req, res) => {
-    const product = await Product.find();
-  res.json({ product });
+    try {
+      const product = await Product.find().sort({price: 1});
+      if(product === 0) {
+        return res.status(200).json({
+          status: "success",
+          msg: "There are no products"
+        });
+      }
+      res.json(product);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
 };
 
 //get first search product
 const getoneProduct = async(req, res) => {
+  try {
     const product = await Product.findOne({ name: req.params.name });
-  res.json({ product });
+    if(product===0) {
+      return res.status(200).json({
+        status: "success",
+        msg: "There is no product of such"
+      })
+    }
+    res.json( product );
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
+};
+
+//querying and filtering products
+const filterProduct = async(req, res) => {
+  try {
+    //query for name: input the query expression
+    const query = {name: /biscuit/i};
+
+    //query for category: input the query expression
+    //const query = {category: /junks/i};
+
+    const products = await Product.find(query).sort({price: 1});
+    if(products.length === 0) {
+      return res.status(200).json({
+        status: "success",
+        msg: "There are no products",
+      });
+    };
+
+    res.json(products);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
 };
 
 //update product
@@ -82,10 +130,11 @@ const deleteProduct = async(req, res) =>{
       }
 };
 
-module.exports = {
+export default {
     createProduct,
     getallProduct,
     getoneProduct,
     updateProduct,
     deleteProduct,
+    filterProduct,
 }

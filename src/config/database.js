@@ -1,7 +1,11 @@
-const { default: mongoose } = require('mongoose');
+//const { default: mongoose } = require('mongoose');
+import mongoose from "mongoose";
 
 //Setting up environment variables
-require('dotenv').config();
+//require('dotenv').config();
+import dotenv from "dotenv";
+const config = dotenv.config();
+
 const PORT = process.env.PORT || 5000;
 
 //Setting up database
@@ -22,4 +26,4 @@ const connectDatabase = async (app) => {
     }
 }
 
-module.exports = {connectDatabase};
+export {connectDatabase};
