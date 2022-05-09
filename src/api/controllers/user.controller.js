@@ -1,6 +1,10 @@
 import {UserProduct} from "../models/user.model.js";
 import { userValidation } from "../validators/user.validation.js";
 import bcrypt from "bcryptjs";
+import dotenv from "dotenv";
+const config = dotenv.config();
+
+const salt = parseInt(process.env.SALT);
 
 //create user
 async function signup(req, res) {
@@ -17,7 +21,7 @@ async function signup(req, res) {
 
         //check if account exists
         //P.S: deactivate this block of code at first use(it might throw an error). Create a user then turn on...
-        const emailExists = await UserProduct.findOne({email});
+        const emailExists = await UserProduct.findOne({email: email, active: true});
         if(emailExists) {
             return res.status(400).json({
                 status: 'failed ',
@@ -26,7 +30,7 @@ async function signup(req, res) {
         };
 
         //hash password
-        const salt = 12;
+        //const salt = 12;
         password = await bcrypt.hash(password, salt);
 
         //create a new user account
@@ -136,7 +140,9 @@ const updateUserPassword = async(req, res) => {
                 success: false, 
                 msg: "Incorrect Password"});
         }
-        user.password = req.body.password;
+        const password = req.body.password;
+        user.password = await bcrypt.hash(password, salt);
+
         await user.save();
 
         res.status(200).json({
