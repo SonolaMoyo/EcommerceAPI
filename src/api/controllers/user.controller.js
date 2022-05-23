@@ -1,7 +1,9 @@
 import {UserProduct} from "../models/user.model.js";
 import { userValidation } from "../validators/user.validation.js";
+import { validateLogin } from "../validators/user.validation.js";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 const config = dotenv.config();
 
 const salt = parseInt(process.env.SALT);
@@ -67,7 +69,7 @@ const readUser = async(req,res) => {
                 msg: "no user created"
             })
         }
-        res.status(200).json(users)
+        res.status(200).json(users);
     } catch (err) {
         console.log(err);
         res.status(500).json({
@@ -184,11 +186,79 @@ const deleteUser = async(req, res) => {
     }
 }
 
+//sign in a user
+const loginUser = async(req, res) => {
+    try {
+        const {error} = validateLogin(req.body);
+        if(error) {
+            console.log(error);
+            return res.status(401).json({
+                status: "failed",
+                msg: "incorrect details",
+                error
+            })
+        };
+        const {email, password} = req.body;
+        const user = await UserProduct.findOne({email}).select('+password');
+
+        //compare password with hash password
+        const validUser = await bcrypt.compare(password, user.password);
+
+        if(!validUser || !user) {
+            return res.status(400).json({
+                status: true,
+                msg: "Incorrect details, access denied",
+                err
+            })
+        }
+
+        //create a token
+        const token = jwt.sign({id: user._id}, process.env.USER_JWT_TOKEN);
+
+        res.cookie('authToken', token).status(200).json({
+            success: true,
+            msg: "Login successfull",
+            token
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            status: "failed",
+            msg: "Unable to login",
+            error});
+    }
+}
+
+//logout User
+const logoutUser = async(req, res) => {
+    try {
+        res
+        .status(200)
+        .clearCookie('authToken')
+        .json({
+            success: true,
+            msg: "logout successful"
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            status: "failed",
+            msg: "Unable to logout",
+            error});
+    }
+}
+
 
 export default {signup,
                 readUser,
                 readOneUser,
                 updateUserInfo,
                 updateUserPassword,
-                deleteUser}
+                deleteUser,
+                loginUser,
+                logoutUser}
 
+
+//cookies in res is written in singular e.g "cookie", "clearCookie"
+//cookies in req is written in plural e.g "cookies"

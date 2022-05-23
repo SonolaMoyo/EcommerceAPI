@@ -11,3 +11,12 @@ export function userValidation(user) {
 
     return Schema.validate(user);
 }
+
+export function validateLogin(user) {
+    const Schema = joi.object({
+        email: joi.string().email().required(),
+        password: joi.string().required(),
+    }).unknown();
+
+    return Schema.validate(user);
+}

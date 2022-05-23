@@ -4,6 +4,8 @@ import userController from "../controllers/user.controller.js"
 
 router.post('/', userController.signup);
 router.get('/', userController.readUser);
+router.get('/login', userController.loginUser);
+router.get('/logout', userController.logoutUser);
 router.get('/:id', userController.readOneUser);
 router.put('/info/:id', userController.updateUserInfo);
 router.put('/password/:id', userController.updateUserPassword);

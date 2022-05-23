@@ -6,7 +6,8 @@ export const productValidator = (product) => {
         name: joi.string().min(2).max(25).required(),
         description: joi.string().min(2).max(225),
         category: joi.string().min(2).max(50).required(), 
-        //price: joi.number().required(),
+        initialPrice: joi.number().required(),
+        currentValue: joi.number().required(),
         noInStock: joi.number()
     }).unknown();
 

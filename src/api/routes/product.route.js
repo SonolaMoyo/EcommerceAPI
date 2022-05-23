@@ -3,9 +3,10 @@ import express from "express";
 const router = express.Router();
 //const ProductController = require('../controllers/product.controller');
 import ProductController from "../controllers/product.controller.js";
+import {authorise} from "../middlewares/authorise.js";
 
-router.post('/', ProductController.createProduct);
-router.get('/', ProductController.getallProduct);
+router.post('/', authorise,ProductController.createProduct);
+router.get('/get', authorise, ProductController.getallProduct);
 router.get('/filter', ProductController.filterProduct);
 router.get('/:name', ProductController.getoneProduct);
 router.put('/:name', ProductController.updateProduct);

@@ -16,7 +16,7 @@ const createProduct = async(req, res) => {
     }
 
     //create kitty
-    const product = new Product({ ...req.body });
+    const product = new Product({ ...req.body, user: req.user.id });
     const saveProduct = await product.save();
     
     return res.status(401).json({
