@@ -5,6 +5,7 @@ const userSchema = mongoose.Schema({
     lastname: {type: String, required: true, min:2, max: 50, trim: true},
     email: {type: String, lowercase: true, min:2, max:255},
     password: {type: String, required: true, min: 8},
+    refreshToken: {type: String, default: '', select: false},
     active: {type: Boolean, default: true},
 }, {timestamps: true});
 

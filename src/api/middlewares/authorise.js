@@ -2,22 +2,25 @@ import jwt from "jsonwebtoken";
 
 export const authorise = async(req, res, next) => {
     try {
-        const token = req.cookies.authToken;
+        const authHeader = req.headers["authorisation"];
 
-        if(!token) {
-            return res.status(403).json({
+        if(!authHeader) {
+            return res.status(401).json({
                 success: false,
-                msg: "Accessed denied",
+                msg: "Accessed denied, Sign In",
             })
         }
 
+        const token = authHeader.split(' ')[1];
+        //console.log(token);
+
         //verify token
-        const verify = jwt.verify(token, process.env.USER_JWT_TOKEN);
+        const verify = jwt.verify(token, process.env.ACCESS_JWT_TOKEN);
         req.user = verify;
         next();
     } catch (error) {
         console.log(error);
-        return res.status(403).json({
+        return res.status(401).json({
             success: 'failed',
             msg: 'Access denied'
         })

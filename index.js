@@ -14,6 +14,7 @@ app.use(cookieParser());
 
 app.get('/', async(req, res) => {
     res.send('Inventory App');
+    res.cookie("httpOnly", "example", {httpOnly: true});
 });
 
 //const ProductsRoute = require('./src/api/routes/product.route');
